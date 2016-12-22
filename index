@@ -1,0 +1,105 @@
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<script>
+
+var currentAnswer;
+var timeUp;
+var easyNum = 10;
+var mediumNum = 100;
+var hardNum = 1000;
+var currentDifficulty = 0;
+
+function start(){
+$("#why").css("background-color","turquoise");
+timeUp = false;
+var s = setInterval(setTimer,1000);
+
+calculateDifficulty();
+createQuestion();
+
+}
+
+function checkAnswer(){
+if (timeUp == true){
+alert("times up!");
+return;
+}
+var numAnswer = parseInt($("#answer").val());
+if (numAnswer==currentAnswer){
+$("#answer").val("");
+createQuestion();
+var score = parseInt($("#score").html());
+score = score + 50;
+$("#score").html(score);
+}
+}
+
+function createQuestion(){
+var rand1 = Math.floor((Math.random() * currentDifficulty) + 1);
+var rand2 = Math.floor((Math.random() * currentDifficulty) + 1);
+var question = rand1 + "+" + rand2;
+$("#question").html(question);
+currentAnswer = rand1 + rand2;
+}
+
+function calculateDifficulty(){
+
+if ($("#easy").is(":checked") == true){
+currentDifficulty = easyNum;
+}
+
+if ($("#medium").is(":checked") == true){
+currentDifficulty = mediumNum;
+}
+
+if ($("#hard").is(":checked") == true){
+currentDifficulty = hardNum;
+}
+
+}
+function setTimer(){
+  var count = $("#countdown").html();  
+  var countNum = parseInt(count);
+  countNum = countNum - 1;
+  
+  if (countNum <= 0){
+  //clearInterval(s);
+  $("#countdown").html("0");
+  timeUp=true;
+  $("#why").css("background-color","red");
+  return;
+  }
+  
+  $("#countdown").html(countNum);
+}
+</script>
+
+
+<body>
+
+<a onclick="start();">
+<div id="why" style="background-color:green; width:50px; height:50px; text-align:center; line-height:50px;">
+<span style="font-size:30px; font-family:arial;" id="countdown">30</span> 
+</div>
+</a>
+
+<br>
+<span id="question"></span>
+</body>
+<br>
+<input id="answer" onKeyDown="if(event.keyCode==13) checkAnswer();"></input>
+<br>
+
+<h3>Score</h3>
+<span id="score">0</span>
+<br><br>
+<input type="radio" name="difficulty" id="easy" value="easy">Easy
+<input type="radio" name="difficulty" id="medium" value="medium">Medium
+<input type="radio" name="difficulty" id="hard" value="hard">Hard
+
+<br><br>
+Select a difficulty and click the box to begin
+<br>
+Type in your answer and press enter to submit 
+</html>
