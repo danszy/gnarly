@@ -1,14 +1,25 @@
 <html>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
 <script>
+var isMobile = false;
+
+if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+ isMobile = true;
+}
 
 var currentAnswer;
 var timeUp;
 var easyNum = 10;
-var mediumNum = 100;
-var hardNum = 1000;
+var mediumNum = 50;
+var hardNum = 200;
+var easyMult = 5;
+var mediumMult = 12;
+var hardMult = 30;
+var currentMult = 0;
 var currentDifficulty = 0;
+var currentVariant;
+var whichType = 0;
 
 function start(){
 $("#why").css("background-color","turquoise");
@@ -16,10 +27,23 @@ timeUp = false;
 var s = setInterval(setTimer,1000);
 
 calculateDifficulty();
+getVariant();
 createQuestion();
 
 }
 
+function createQuestion(){
+if (currentVariant == '0'){
+createAdditionQuestion();
+}
+if (currentVariant == '1'){
+createMultiplicationQuestion();
+}
+if (currentVariant == '2'){
+createBothQuestion();
+}
+
+}
 function checkAnswer(){
 if (timeUp == true){
 alert("times up!");
@@ -35,7 +59,7 @@ $("#score").html(score);
 }
 }
 
-function createQuestion(){
+function createAdditionQuestion(){
 var rand1 = Math.floor((Math.random() * currentDifficulty) + 1);
 var rand2 = Math.floor((Math.random() * currentDifficulty) + 1);
 var question = rand1 + "+" + rand2;
@@ -43,21 +67,61 @@ $("#question").html(question);
 currentAnswer = rand1 + rand2;
 }
 
+function createMultiplicationQuestion(){
+
+var rand1 = Math.floor((Math.random() * currentMult) + 1);
+var rand2 = Math.floor((Math.random() * currentMult) + 1);
+var question = rand1 + "x" + rand2;
+$("#question").html(question);
+currentAnswer = rand1 * rand2;
+}
+
+function createBothQuestion(){
+if (whichType == 0){
+createAdditionQuestion();
+whichType = 1;
+}else{
+createMultiplicationQuestion();
+whichType = 0;
+}
+
+}
+
 function calculateDifficulty(){
 
 if ($("#easy").is(":checked") == true){
 currentDifficulty = easyNum;
+currentMult = easyMult;
 }
 
 if ($("#medium").is(":checked") == true){
 currentDifficulty = mediumNum;
+currentMult = mediumMult;
 }
 
 if ($("#hard").is(":checked") == true){
 currentDifficulty = hardNum;
+currentMult = hardMult;
 }
 
 }
+
+function getVariant(){
+
+if ($("#addition").is(":checked") == true){
+currentVariant = '0';
+}
+
+if ($("#multiplication").is(":checked") == true){
+currentVariant = '1';
+}
+
+if ($("#both").is(":checked") == true){
+currentVariant = '2';
+}
+
+}
+
 function setTimer(){
   var count = $("#countdown").html();  
   var countNum = parseInt(count);
@@ -94,10 +158,16 @@ function setTimer(){
 <h3>Score</h3>
 <span id="score">0</span>
 <br><br>
-<input type="radio" name="difficulty" id="easy" value="easy">Easy
-<input type="radio" name="difficulty" id="medium" value="medium">Medium
-<input type="radio" name="difficulty" id="hard" value="hard">Hard
+<input type="radio" name="difficulty" id="easy" checked>Easy
+<input type="radio" name="difficulty" id="medium">Medium
+<input type="radio" name="difficulty" id="hard">Hard
+<br><br>
+<input type="radio" name="variant" id="addition" checked>Addition
+<input type="radio" name="variant" id="multiplication">Multiplication
+<input type="radio" name="variant" id="both">Both
 
+<br><br>
+<input type="button" onclick="window.location.reload();" value="Restart"> 
 <br><br>
 Select a difficulty and click the box to begin
 <br>
